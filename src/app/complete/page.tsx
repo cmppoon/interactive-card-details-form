@@ -4,10 +4,10 @@ import Image from "next/image";
 import iconComplete from "/public/icon-complete.svg";
 import Link from "next/link";
 
-export default function Complete({
+export default async function Complete({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined };
+  searchParams: Promise<{ [key: string]: string | undefined }>;
 }) {
   const {
     cvc = "",
@@ -15,7 +15,7 @@ export default function Complete({
     year = "",
     name = "",
     cardNum = "",
-  } = searchParams;
+  } = await searchParams;
 
   console.log(name);
 
@@ -39,7 +39,7 @@ export default function Complete({
         />
         <h1 className="mt-4 text-2xl font-bold tracking-widest">THANK YOU!</h1>
         <p className="mt-4 text-dark-grayish-violet">
-          We've added your card details
+          We&apos;ve added your card details
         </p>
         <Link
           className="mt-10 flex w-full justify-center rounded-md bg-very-dark-violet px-3 py-3 text-sm/6 font-semibold text-light-grayish-violet"
