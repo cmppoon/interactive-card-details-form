@@ -1,101 +1,239 @@
-import Image from "next/image";
+"use client";
+
+import Form from "next/form";
+import { useState } from "react";
+import BgImage from "./bgImage";
+import CardImage from "./cardImage";
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const [cvc, setCvc] = useState("");
+  const [month, setMonth] = useState("");
+  const [year, setYear] = useState("");
+  const [name, setName] = useState("");
+  const [cardNum, setCardNum] = useState("");
+  const [errors, setErrors] = useState({
+    name: "",
+    cardNum: "",
+    month: "",
+    year: "",
+    cvc: "",
+  });
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+  const validateForm = () => {
+    const newErrors = {
+      name: "",
+      cardNum: "",
+      month: "",
+      year: "",
+      cvc: "",
+    };
+
+    // Name validation
+    if (!name.trim()) {
+      newErrors.name = "Name is required.";
+    } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+      newErrors.name = "Name can only contain letters and spaces.";
+    }
+
+    // Card Number validation
+    if (!cardNum.trim()) {
+      newErrors.cardNum = "Card number is required.";
+    } else if (!/^\d{16}$/.test(cardNum)) {
+      newErrors.cardNum = "Card number must be 16 digits.";
+    }
+
+    // Expiration Date validation
+    if (
+      !month.trim() ||
+      !/^\d{2}$/.test(month) ||
+      Number(month) < 1 ||
+      Number(month) > 12
+    ) {
+      newErrors.month = "Invalid month.";
+    }
+    if (
+      !year.trim() ||
+      !/^\d{2}$/.test(year) ||
+      Number(year) < new Date().getFullYear() % 100
+    ) {
+      newErrors.year = "Invalid year.";
+    }
+
+    // CVC validation
+    if (!cvc.trim() || !/^\d{3}$/.test(cvc)) {
+      newErrors.cvc = "CVC must be a 3-digit number.";
+    }
+
+    console.log(errors);
+    setErrors(newErrors);
+
+    // Return true if no errors
+    return Object.values(newErrors).every((error) => error === "");
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    if (!validateForm()) {
+      e.preventDefault(); // Prevent default form submission if validation fails
+    }
+  };
+  return (
+    <main className="grid grid-flow-row grid-rows-3 sm:max-h-screen sm:grid-flow-col sm:grid-cols-3 sm:grid-rows-1">
+      <section className="relative sm:col-span-1">
+        <BgImage />
+        <CardImage
+          cardNum={cardNum}
+          name={name}
+          month={month}
+          year={year}
+          cvc={cvc}
+        />
+      </section>
+      <section className="row-span-2 mt-10 p-4 text-very-dark-violet sm:col-span-2 sm:m-auto sm:max-w-96">
+        <Form
+          onSubmit={handleSubmit}
+          action="complete"
+          className="mt-6 grid grid-cols-4 gap-x-4 gap-y-6 sm:grid-cols-4"
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          <div className="col-span-full sm:col-span-4">
+            <label
+              htmlFor="name"
+              className={`block text-sm font-medium ${
+                errors.name && "text-red-600"
+              }`}
+            >
+              Name on card
+            </label>
+            <div className="mt-1">
+              <input
+                id="name"
+                name="name"
+                type="text"
+                autoComplete="cc-name"
+                className={`block w-full rounded-md sm:text-sm ${
+                  errors.name
+                    ? "border-red-600 placeholder:text-red-600"
+                    : "border-dark-grayish-violet placeholder:text-dark-grayish-violet"
+                }`}
+                placeholder="e.g. Jane Appleseed"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="col-span-full sm:col-span-4">
+            <label
+              htmlFor="cardNum"
+              className={`block text-sm font-medium ${
+                errors.cardNum && "text-red-600"
+              }`}
+            >
+              Card number
+            </label>
+            <div className="mt-1">
+              <input
+                id="cardNum"
+                name="cardNum"
+                type="text"
+                autoComplete="cc-number"
+                className={`block w-full rounded-md sm:text-sm ${
+                  errors.cardNum
+                    ? "border-red-600 placeholder:text-red-600"
+                    : "border-dark-grayish-violet placeholder:text-dark-grayish-violet"
+                }`}
+                placeholder="e.g. 1234 5678 9123 0000"
+                maxLength={16}
+                value={cardNum}
+                onChange={(e) => setCardNum(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="col-span-2">
+            <label
+              htmlFor="expDate"
+              className={`block text-sm font-medium ${
+                errors.month && "text-red-600"
+              }`}
+            >
+              Exp. Date (MM/YY)
+            </label>
+            <div className="mt-1 flex gap-x-2">
+              <input
+                id="month"
+                name="month"
+                type="text"
+                autoComplete="cc-exp-month"
+                aria-labelledby="expDate"
+                className={`block w-full rounded-md sm:text-sm ${
+                  errors.month
+                    ? "border-red-600 placeholder:text-red-600"
+                    : "border-dark-grayish-violet placeholder:text-dark-grayish-violet"
+                }`}
+                placeholder="MM"
+                maxLength={2}
+                value={month}
+                onChange={(e) => setMonth(e.target.value)}
+              />
+              <input
+                id="year"
+                name="year"
+                type="text"
+                autoComplete="cc-exp-year"
+                aria-labelledby="expDate"
+                className={`block w-full rounded-md sm:text-sm ${
+                  errors.year
+                    ? "border-red-600 placeholder:text-red-600"
+                    : "border-dark-grayish-violet placeholder:text-dark-grayish-violet"
+                }`}
+                placeholder="YY"
+                maxLength={2}
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="col-span-2">
+            <label
+              htmlFor="cvc"
+              className={`block text-sm font-medium ${
+                errors.cardNum && "text-red-600"
+              }`}
+            >
+              CVC
+            </label>
+            <div className="mt-1">
+              <input
+                id="cvc"
+                name="cvc"
+                type="text"
+                maxLength={3}
+                autoComplete="cc-csc"
+                className={`block w-full rounded-md sm:text-sm ${
+                  errors.cvc
+                    ? "border-red-600 placeholder:text-red-600"
+                    : "border-dark-grayish-violet placeholder:text-dark-grayish-violet"
+                }`}
+                placeholder="e.g. 123"
+                value={cvc}
+                onChange={(e) => {
+                  setCvc(e.target.value);
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="col-span-full">
+            <button
+              type="submit"
+              className="flex w-full justify-center rounded-md bg-very-dark-violet px-3 py-3 text-sm/6 font-semibold text-light-grayish-violet"
+            >
+              Confirm
+            </button>
+          </div>
+        </Form>
+      </section>
+    </main>
   );
 }
