@@ -22,7 +22,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${spaceGrotesk.className} antialiased`}>
-        {children}
+        <main className="grid max-h-screen grid-flow-row grid-rows-3 lg:grid-flow-col lg:grid-cols-3 lg:grid-rows-1">
+          {children}
+        </main>
       </body>
     </html>
   );
